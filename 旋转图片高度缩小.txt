@@ -1,0 +1,68 @@
+import React, { useState } from 'react';
+
+
+import './c2.css'; // 引入CSS文件
+
+const imgURL = 'https://syimg.3dmgame.com/uploadimg/upload/image/20230209/20230209173058_50497.jpg'
+
+const ImageComponent = () => {
+  const [scale, setScale] = useState(1); // 图片的初始缩放比例
+  const [rotate, setRotate] = useState(0); // 图片的初始旋转角度
+
+  const handleRotateLeft = () => {
+    const image = document.getElementById('image');
+    const rect = image!.getBoundingClientRect();
+    const newWidth = Math.abs(rect.width * Math.cos(rotate * (Math.PI / 180))) +
+      Math.abs(rect.height * Math.sin(rotate * (Math.PI / 180)));
+    const newHeight = Math.abs(rect.width * Math.sin(rotate * (Math.PI / 180))) +
+      Math.abs(rect.height * Math.cos(rotate * (Math.PI / 180)));
+    const scaleX = Math.min(300 / newWidth, 1);
+    const scaleY = Math.min(900 / newHeight, 1);
+    const newScale = Math.min(scaleX, scaleY);
+
+    setScale(newScale);
+    setRotate(rotate + 90);
+  };
+
+  const handleRotateRight = () => {
+    const image = document.getElementById('image');
+    const rect = image!.getBoundingClientRect();
+    const newWidth = Math.abs(rect.width * Math.cos(rotate * (Math.PI / 180))) +
+      Math.abs(rect.height * Math.sin(rotate * (Math.PI / 180)));
+    const newHeight = Math.abs(rect.width * Math.sin(rotate * (Math.PI / 180))) +
+      Math.abs(rect.height * Math.cos(rotate * (Math.PI / 180)));
+
+    const scaleX = Math.min(300 / newWidth, 1);
+    const scaleY = Math.min(900 / newHeight, 1);
+    const newScale = Math.min(scaleX, scaleY);
+
+    setScale(newScale);
+    setRotate(rotate - 90);
+  };
+  
+  return (
+
+    <div className="dialog-content">
+      <div
+        className="image-container"><br></br><br></br><br></br><br></br><br></br>
+        <img
+          className="image" id="image"
+          style={{
+            transform: `scale(${scale}) rotate(${rotate}deg)`,
+          }}
+          src={imgURL}
+          height={300}
+          width={600}
+          alt="Your Image"
+        /><br></br><br></br><br></br><br></br><br></br>
+        <div className="button-container">
+          <button onClick={handleRotateLeft}>Rotate Left</button>
+          <button onClick={handleRotateRight}>Rotate Right</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+export default ImageComponent;

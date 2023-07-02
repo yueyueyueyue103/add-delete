@@ -1,0 +1,133 @@
+import React, { useState } from 'react';
+
+import Draggable from 'react-draggable';
+import { Button, Modal } from 'antd';
+
+import './c2.css'; // 引入CSS文件
+
+const imgURL = 'https://syimg.3dmgame.com/uploadimg/upload/image/20230209/20230209173058_50497.jpg'
+
+const ImageComponent = () => {
+  const [showDialog, setShowDialog] = useState(false); // 是否显示弹出窗口
+  const [scale, setScale] = useState(1); // 图片的初始缩放比例
+  const [rotate, setRotate] = useState(0); // 图片的初始旋转角度
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 }); // 鼠标位置
+  const [zoomCount, setZoomCount] = useState(0); // 放大次数计数
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [dialogPosition, setDialogPosition] = useState({ x: 0, y: 0 }); // 小窗口位置
+  const [dragging, setDragging] = useState(false); // 是否正在拖拽图片
+
+
+  const handleMouseDown = (event) => {
+    event.preventDefault();
+    setDragging(true);
+    setDragOffset({
+      x: event.clientX - dialogPosition.x,
+      y: event.clientY - dialogPosition.y,
+    });
+  };
+
+  const handleMouseMove = (event) => {
+    if (dragging) {
+      setDialogPosition({
+        x: event.clientX - dragOffset.x,
+        y: event.clientY - dragOffset.y,
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setDragging(false);
+  };
+
+  const openDialog = () => {
+    setShowDialog(true);
+  };
+
+  const closeDialog = () => {
+    setShowDialog(false);
+  };
+
+  const handleRotateLeft = () => {
+    setRotate(rotate - 90);
+  };
+
+  const handleRotateRight = () => {
+    setRotate(rotate + 90);
+  };
+
+  const handleZoomIn = () => {
+    if (zoomCount < 5) {
+      setScale(scale + 0.5);
+      setZoomCount(zoomCount + 1);
+    }
+  };
+
+  const handleZoomOut = () => {
+    if (scale > 1) {
+      setScale(scale - 0.5);
+      setZoomCount(zoomCount - 1);
+    }
+  };
+
+
+  return (
+    <div className="image-container" ><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br>
+      <button className="button-a" onClick={openDialog}>显示图片的窗口</button>
+      {showDialog && (
+
+        <div className="dialog" style={{ height: 600, width: 950, overflow: 'hidden' }} >
+
+          <div
+            className="dialog-overlay"
+            style={{
+              position: 'relative',
+              top: dialogPosition.y,
+              left: dialogPosition.x,
+
+              width: 600,
+              height: 300,
+
+            }}>
+
+            <div className="dialog-overlay"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+
+            >
+              <img
+                className="image"
+                style={{
+                  transform: `scale(${scale}) rotate(${rotate}deg)`,
+                  left: `${mousePosition.x}px`,
+                  top: `${mousePosition.y}px`,
+
+
+                }}
+                height={300}
+                width={650}
+                src={imgURL}
+                alt="Your Image"
+              />
+            </div>
+
+            <br></br><br></br><br></br><br></br><br></br><br></br><br></br>
+          </div>
+          <button onClick={handleRotateLeft}>Rotate Left</button>
+          <button onClick={handleRotateRight}>Rotate Right</button>
+          <button onClick={handleZoomIn}>Zoom In</button>
+          <button onClick={handleZoomOut}>Zoom Out</button>
+          <button className="close-dialog" onClick={closeDialog}>
+            Close Dialog </button>
+        </div>
+
+      )}
+
+
+    </div>
+  );
+};
+
+
+export default ImageComponent;
