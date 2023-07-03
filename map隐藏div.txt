@@ -1,0 +1,70 @@
+
+
+
+import React, { useEffect, useRef, useState } from 'react';
+import Draggable from 'react-draggable';
+import { Button, Modal } from 'antd';
+import './c2.css'; // 引入CSS文件
+
+const imgURL1 = 'https://syimg.3dmgame.com/uploadimg/upload/image/20230209/20230209173058_50497.jpg';
+const imgURL2 = 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png';
+
+function MyComponent() {
+  const data = [null, null, "Value 3", "Value 4", "Value 5"];
+
+  return (
+    <div>
+      {data.map((item, index) => {
+        if ((index === 0 || index === 1) && item === null) {
+          return <div key={index}>&nbsp;</div>; // 第一和第二个元素为空，显示空白
+        }
+        if (index >= 2 && item === null) {
+          return null; // 第三、第四、第五个元素为空，隐藏div
+        }
+        return <div key={index}>{item}</div>;
+      })}
+    </div>
+  );
+}
+
+export default MyComponent;
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------
+
+
+
+
+
+
+import React, { useEffect, useRef, useState } from 'react';
+import Draggable from 'react-draggable';
+import { Button, Modal } from 'antd';
+import './c2.css'; // 引入CSS文件
+
+const imgURL1 = 'https://syimg.3dmgame.com/uploadimg/upload/image/20230209/20230209173058_50497.jpg';
+const imgURL2 = 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png';
+
+function MyComponent() {
+  const a = [789, null, null, 789, null, null];
+
+  return (
+    <div>
+      {a.map(value => value !== null && (
+        <React.Fragment>
+          <div>{value}</div>
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+export default MyComponent;
+
