@@ -1,0 +1,130 @@
+import React, { useEffect, useState } from 'react';
+import './c2.css'; // 引入CSS文件
+import './on.jpg';
+import { Image } from 'antd';
+
+const imgURL1 = 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png';
+const imgURL2 = 'https://syimg.3dmgame.com/uploadimg/upload/image/20230209/20230209173058_50497.jpg';
+
+
+
+
+function YourComponent() {
+  const a = true;
+  const b = false;
+  const c = false;
+
+  const [isOn1, setisOn1] = useState<boolean>(a);
+  const [isOn2, setisOn2] = useState<boolean>(b);
+  const [isOn3, setisOn3] = useState<boolean>(c);
+  const [isButtonEnabled, setButtonEnabled] = useState<boolean>(false);
+
+
+  const handleClick = () => {
+    if (isButtonEnabled) {
+      // 在此处添加处理按钮点击的逻辑
+      console.log('按钮被点击了');
+    }
+  };
+
+  const handleImageClick = () => {
+
+    setisOn1(!isOn1);
+    setButtonEnabled(true);
+  };
+
+  const handleImageClick2 = () => {
+    setisOn2(!isOn2);
+    setButtonEnabled(true);
+  };
+
+  const handleImageClick3 = () => {
+    setisOn3(!isOn3);
+    setButtonEnabled(true);
+  };
+
+  useEffect(() => {
+    const button = document.getElementById('myButton');
+    if (isOn1 === a && isOn2 === b && isOn3 === c) {
+      button?.classList.remove('active');
+      button?.classList.add('disabled');
+    } else {
+      button?.classList.remove('disabled');
+      button?.classList.add('active');
+      
+    }
+  }, [isOn1, isOn2, isOn3]);
+
+
+  return (
+    <div>
+      <br /><br /><br /><br /><br /><br />
+      <img
+        src={!isOn1 ? imgURL2 : imgURL1}
+        alt='Off'
+        onClick={handleImageClick}
+        height={200}
+        width={200}
+      /><br></br>
+      <img
+        src={!isOn2 ? imgURL2 : imgURL1}
+        alt='Off'
+        onClick={handleImageClick2}
+        height={200}
+        width={200}
+      /><br></br>
+      <img
+        src={!isOn3 ? imgURL2 : imgURL1}
+        alt='Off'
+        onClick={handleImageClick3}
+        height={200}
+        width={200}
+      />
+      <br /> <br /> <br /> <br /> <br /> <br /> <br />
+      <div id="myButton" className="disabled" onClick={handleClick}>
+        <div className="button">A按钮</div>
+      </div>
+    </div>
+  );
+}
+
+export default YourComponent;
+
+
+
+
+
+
+
+
+
+
+
+.disabled {
+  height: 100px;
+  border: 2px solid black;
+  padding: 10px 20px;
+  background-color: #ccc;
+  color: #fff;
+  font-size: 16px;
+  cursor: not-allowed;
+}
+
+.myButton{
+
+  height: 100px;
+  border: 2px solid black;
+  padding: 10px 20px;
+  background-color: #ccc;
+ 
+
+}
+
+.active {
+  /* 按钮活动状态的样式 */
+  /* 例如，修改背景颜色或添加其他样式 */
+  background-color: green;
+  color: white;
+  /* 添加其他样式 */
+}
+
