@@ -1,0 +1,109 @@
+
+
+
+import React, { useEffect, useRef, useState } from 'react';
+import Draggable from 'react-draggable';
+import { Button, Modal } from 'antd';
+import './c2.css'; // 引入CSS文件
+
+
+
+
+const MyComponent = () => {
+  const [selectedCanvas, setSelectedCanvas] = useState<number | null>(null);
+  const [rotationAngle, setRotationAngle] = useState(0);
+
+  const canvasRef1 = useRef<HTMLCanvasElement>(null);
+  const canvasRef2 = useRef<HTMLCanvasElement>(null);
+
+  const imgURL1 =
+    'https://syimg.3dmgame.com/uploadimg/upload/image/20230209/20230209173058_50497.jpg';
+  const imgURL2 =
+    'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png';
+
+  const handleCanvasClick = (canvasIndex: number) => {
+    setSelectedCanvas(canvasIndex);
+  };
+
+  const handleRotateLeft = () => {
+    setRotationAngle(prevAngle => prevAngle - 90);
+  };
+
+  const handleRotateRight = () => {
+    setRotationAngle(prevAngle => prevAngle + 90);
+  };
+
+  const rotateCanvas = (canvas: HTMLCanvasElement, angle: number) => {
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const img = new Image();
+      img.onload = () => {
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((angle * Math.PI) / 180);
+        ctx.drawImage(img, -img.width / 2, -img.height / 2);
+        ctx.restore();
+      };
+      if (canvas === canvasRef1.current) {
+        img.src = imgURL1;
+      } else if (canvas === canvasRef2.current) {
+        img.src = imgURL2;
+      }
+    }
+  };
+
+  useEffect(() => {
+    const canvas1 = canvasRef1.current;
+    const canvas2 = canvasRef2.current;
+    const ctx1 = canvas1?.getContext('2d');
+    const ctx2 = canvas2?.getContext('2d');
+
+    const img1 = new Image();
+    const img2 = new Image();
+
+    img1.onload = () => {
+      if (ctx1) {
+        ctx1.clearRect(0, 0, canvas1!.width, canvas1!.height);
+        ctx1.drawImage(img1, 0, 0);
+      }
+    };
+
+    img2.onload = () => {
+      if (ctx2) {
+        ctx2.clearRect(0, 0, canvas2!.width, canvas2!.height);
+        ctx2.drawImage(img2, 0, 0);
+      }
+    };
+
+    img1.src = imgURL1;
+    img2.src = imgURL2;
+  }, []);
+
+  useEffect(() => {
+    if (selectedCanvas === 1 && canvasRef1.current) {
+      rotateCanvas(canvasRef1.current, rotationAngle);
+    } else if (selectedCanvas === 2 && canvasRef2.current) {
+      rotateCanvas(canvasRef2.current, rotationAngle);
+    }
+  }, [rotationAngle]);
+
+  return (
+    <div>
+      <canvas
+        ref={canvasRef1}
+        onClick={() => handleCanvasClick(1)}
+        style={{ width: '200px', height: '200px', border: selectedCanvas === 1 ? '2px solid red' : '' }}
+      />
+      <canvas
+        ref={canvasRef2}
+        onClick={() => handleCanvasClick(2)}
+        style={{ width: '200px', height: '200px', border: selectedCanvas === 2 ? '2px solid red' : '' }}
+      />
+      <button onClick={handleRotateLeft}>左旋转第一个画布</button>
+      <button onClick={handleRotateRight}>右旋转第二个画布</button>
+    </div>
+  );
+};
+
+export default MyComponent;
