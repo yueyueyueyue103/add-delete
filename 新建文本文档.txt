@@ -1,28 +1,97 @@
-.disabled {
-  height: 100px;
-  border: 2px solid black;
-  padding: 10px 20px;
-  background-color: #ccc;
-  color: #fff;
-  font-size: 16px;
-  cursor: not-allowed;
-}
+import React, { useEffect, useRef, useState } from 'react';
+import './c2.css'; // 引入CSS文件
 
-.myButton{
+const imgURL = 'https://picx.zhimg.com/v2-3b4fc7e3a1195a081d0259246c38debc_720w.jpg?source=172ae18b';
 
-  height: 100px;
-  border: 2px solid black;
-  padding: 10px 20px;
-  background-color: #ccc;
- 
+const ImageComponent = () => {
+  const [scale, setScale] = useState(1); // 图片的初始缩放比例
+  const [rotate, setRotate] = useState(0); // 图片的初始旋转角度
+  const [selected, setSelected] = useState(false); // 是否选中画布
 
-}
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const borderRef = useRef<HTMLDivElement>(null);
 
-.active {
-  /* 按钮活动状态的样式 */
-  /* 例如，修改背景颜色或添加其他样式 */
-  background-color: green;
-  color: white;
-  /* 添加其他样式 */
-}
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    const img = new Image();
 
+    img.onload = () => {
+      if (canvas && ctx) {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        updateBorderSize();
+      }
+    };
+
+    img.src = imgURL;
+  }, []);
+
+  useEffect(() => {
+    updateBorderSize();
+  }, [rotate]);
+
+  const updateBorderSize = () => {
+    const container = containerRef.current;
+    const border = borderRef.current;
+    if (container && border) {
+      const containerRect = container.getBoundingClientRect();
+      const imgRect = container.querySelector('canvas')?.getBoundingClientRect();
+      if (imgRect) {
+        const left = imgRect.left - containerRect.left;
+        const top = imgRect.top - containerRect.top;
+        const width = imgRect.width;
+        const height = imgRect.height;
+
+        border.style.left = `${left}px`;
+        border.style.top = `${top}px`;
+        border.style.width = `${width}px`;
+        border.style.height = `${height}px`;
+      }
+    }
+  };
+
+  const handleRotateLeft = () => {
+    setRotate(rotate - 90);
+    setScale(rotate % 180 === 0 ? 0.6 : 1);
+  };
+
+  const handleRotateRight = () => {
+    setRotate(rotate + 90);
+    setScale(rotate % 180 === 0 ? 0.6 : 1);
+  };
+
+  const handleCanvasClick = () => {
+    setSelected(true);
+  };
+
+  return (
+    <div className="dialog-content">
+      <div className="image-container">
+        <div
+          className={`canvas-wrapper ${selected ? 'selected' : ''}`}
+          onClick={handleCanvasClick}
+          ref={containerRef}
+        >
+          <canvas
+            ref={canvasRef}
+            className="image"
+            style={{
+              transformOrigin: 'center center',
+              transform: `scale(${scale}) rotate(${rotate}deg)`,
+            }}
+          />
+          <div className={`border-overlay ${selected ? '' : 'hidden'}`} ref={borderRef} />
+        </div>
+        <div className="button-container">
+          <button onClick={handleRotateLeft}>Rotate Left</button>
+          <button onClick={handleRotateRight}>Rotate Right</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ImageComponent;
