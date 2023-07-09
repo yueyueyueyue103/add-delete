@@ -1,0 +1,70 @@
+import React, { useState } from 'react';
+import './c2.css'; // 引入CSS文件
+
+
+const TextArea = () => {
+  const [year, setYear] = useState('');
+  const [month, setMonth] = useState('');
+  const [day, setDay] = useState('');
+  const [error, setError] = useState('');
+
+  const handleYearChange = (e) => {
+    setYear(e.target.value);
+    setDay(''); // 清空日
+    setError(''); // 清空错误消息
+  };
+
+  const handleMonthChange = (e) => {
+    setMonth(e.target.value);
+    setDay(''); // 清空日
+    setError(''); // 清空错误消息
+  };
+
+  const handleDayChange = (e) => {
+    setDay(e.target.value);
+    setError(''); // 清空错误消息
+  };
+
+  const handleSubmit = () => {
+    if (year === '' || month === '' || day === '') {
+      setError('请填写完整日期');
+      return;
+    }
+
+    // 执行其他操作或提交表单
+  };
+
+  return (
+    <div>
+      <select className="container" value={year} onChange={handleYearChange}>
+        <option value=""></option>
+        <option value="2019">2019</option>
+        <option value="2020">2020</option>
+        <option value="2021">2021</option>
+        <option value="2022">2022</option>
+      </select>年
+      <select className="container" value={month} onChange={handleMonthChange}>
+        <option value=""></option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+      </select>月
+      <input type="text" id="container" value={day} onChange={handleDayChange} />日
+      <br></br>
+      {error && <p className="error">{error}</p>}
+      <button onClick={handleSubmit}>提交</button>
+      <textarea className="textarea" />
+    </div>
+  );
+};
+
+export default TextArea;
