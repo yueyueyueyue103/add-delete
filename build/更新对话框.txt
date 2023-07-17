@@ -1,0 +1,70 @@
+import React, { useState } from 'react';
+import { Button } from 'antd';
+import './c2.css';
+
+function YourComponent() {
+  // 上面的数据
+  const initialData = [
+    {
+      定期卷时间: '2022-2-11',
+      定期卷确认者名: 'AAA',
+      区间径路时间: '2022-2-12',
+      区间径路确认者名: 'BBB',
+      购入者情报时间: '2022-2-13',
+      购入者情报确认者名: 'CCC',
+      发卷许可: '1',
+      发卷更新时间: '2019-6-09',
+      发卷确认者: '确认者D',
+    },
+    // ... 这里是其它数据项
+  ];
+
+  const [data, setData] = useState(initialData);
+  const [refreshCount, setRefreshCount] = useState(0);
+
+  function getStatus(flag: number): string {
+    if (flag === 1) {
+      return '承认';
+    } else if (flag === 2) {
+      return '巨否';
+    } else {
+      return '0';
+    }
+  }
+
+  // 处理按钮点击事件，加载上面的数据
+  const handleButtonClick = () => {
+    // 模拟从后台获取数据
+    fetch('/api/getLatestData')
+      .then(response => response.json())
+      .then(latestData => {
+        // 更新 data 状态和刷新次数
+        setData(latestData);
+        setRefreshCount(prevCount => prevCount + 1);
+
+        // 根据返回的数据条数显示不同的提示
+        if (latestData.length === 0) {
+          alert('别人正在更新...');
+        } else if (latestData.length === 1) {
+          alert('更新成功！');
+        }
+      })
+      .catch(error => {
+        console.error('请求最新数据时发生错误:', error);
+      });
+  };
+
+  return (
+    <div>
+      <br /><br /><br /><br /><br />
+      <Button onClick={handleButtonClick}>点击加载上面的数据</Button>
+      {data.map((row, rowIndex) => {
+        // 渲染数据的逻辑保持不变
+        // ...
+      })}
+      <div>刷新次数：{refreshCount}</div>
+    </div>
+  );
+}
+
+export default YourComponent;
