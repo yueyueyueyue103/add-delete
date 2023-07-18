@@ -1,0 +1,26 @@
+import React, { useState } from 'react';
+
+function YourComponent() {
+  const [refreshCount, setRefreshCount] = useState(0);
+
+  const handleRefreshDiv = () => {
+    setRefreshCount(prevCount => prevCount + 1);
+  };
+
+  const forceUpdate = () => {
+    setRefreshCount(refreshCount + 1);
+  };
+
+  return (
+    <div>
+      <button onClick={handleRefreshDiv}>刷新Div</button>
+      <div>
+        {/* 这部分的内容将在每次刷新时重新渲染 */}
+        <div>{refreshCount}</div>
+        {/* 其他需要刷新的内容 */}
+      </div>
+    </div>
+  );
+}
+
+export default YourComponent;
