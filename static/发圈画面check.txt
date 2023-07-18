@@ -1,0 +1,175 @@
+import React, { useState, useEffect } from 'react';
+import './c2.css'; // Import CSS file
+
+const imgURL = 'https://syimg.3dmgame.com/uploadimg/upload/image/20230209/20230209173058_50497.jpg';
+
+const TextArea = () => {
+  const [isOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalAction, setModalAction] = useState(() => () => {}); // Initial empty function
+
+  const openModal = (message, action) => {
+    setModalMessage(message);
+    setModalAction(() => action);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleConfirm = () => {
+    modalAction(); // Execute the action (login or issue logic)
+    closeModal();
+  };
+
+  const handleLogin = () => {
+    if (year === '' || month === '') {
+      setError('请选择年、月和日');
+      return;
+    }
+
+    if (day === '') {
+      setError('请选择日');
+      return;
+    }
+
+    openModal('确定要执行登录操作吗？', handleLoginConfirm);
+  };
+
+  const handleIssue = () => {
+    openModal('确定要执行发行操作吗？', handleIssueConfirm);
+  };
+
+  const handleLoginConfirm = () => {
+    // Process login logic
+    console.log('登录');
+  };
+
+  const handleIssueConfirm = () => {
+    // Process issue logic
+    console.log('发行');
+  };
+
+  const [year, setYear] = useState('');
+  const [month, setMonth] = useState('3');
+  const [day, setDay] = useState('31'); // Initialize to "31"
+  const [error, setError] = useState('');
+
+  const handleYearChange = (e) => {
+    setYear(e.target.value);
+  };
+
+  const handleMonthChange = (e) => {
+    setMonth(e.target.value);
+  };
+
+  const handleDayChange = (e) => {
+    setDay(e.target.value);
+    setError(''); // Clear the error message
+  };
+
+  const getLastDayOfMonth = () => {
+    if (year === '' || month === '') {
+      return '';
+    }
+
+    const yearInt = parseInt(year);
+    const monthInt = parseInt(month);
+    const lastDay = new Date(yearInt, monthInt, 0).getDate();
+    return lastDay.toString();
+  };
+
+  const isInvalidDate = () => {
+    if (year === '' || month === '' || day === '') {
+      return true;
+    }
+
+    const yearInt = parseInt(year);
+    const monthInt = parseInt(month);
+    const dayInt = parseInt(day);
+
+    const currentDate = new Date();
+    const selectedDate = new Date(yearInt, monthInt - 1, dayInt);
+
+    if (
+      isNaN(selectedDate.getTime()) ||
+      selectedDate > currentDate ||
+      selectedDate.getFullYear() !== yearInt ||
+      selectedDate.getMonth() !== monthInt - 1 ||
+      selectedDate.getDate() !== dayInt
+    ) {
+      return true;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const currentYear = new Date().getFullYear();
+  const maxYear = currentYear + 7;
+
+  // Generate year options (current year to current year + 7)
+  const yearOptions = Array.from({ length: 8 }, (_, index) => (currentYear + index).toString());
+
+  useEffect(() => {
+    // When year or month changes, update the day to the last day of the selected month
+    setDay(getLastDayOfMonth());
+  }, [year, month]);
+
+  return (
+    <div>
+      <select className="container" value={year} onChange={handleYearChange}>
+        <option value=""></option>
+        {yearOptions.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+      年
+      <select className="container" value={month} onChange={handleMonthChange}>
+        <option value=""></option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+      </select>
+      月
+      <input type="text" id="container" value={day} onChange={handleDayChange} />日
+      <br />
+      {error && <p className="error">{error}</p>}
+      <button onClick={handleLogin}>登录</button>
+      <button onClick={handleIssue}>发行</button>
+
+      {/* Common dialog box */}
+      {isOpen && (
+        <div>
+          <div>
+            <p>{modalMessage}</p>
+            <div>
+              <button onClick={handleConfirm}>是</button>
+              <button onClick={closeModal}>取消</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default TextArea;
