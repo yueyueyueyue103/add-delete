@@ -44,3 +44,31 @@ const YourComponent = () => {
 };
 
 export default YourComponent;
+
+
+
+
+
+/* c2.css */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.dataContainer {
+  display: flex;
+  justify-content: center; /* Center items horizontally */
+  gap: 10px;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.dataItem {
+  border: 1px solid #ccc;
+  padding: 5px;
+}
