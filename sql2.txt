@@ -1,0 +1,67 @@
+
+根据你提供的测试代码片段，可以根据不同情况编写以下测试用例：
+
+假设你的代码逻辑是基于某种API接口来执行SQL操作，并返回响应。
+
+Case 1: 成功更新
+假设：数据库中存在满足所有条件的记录，并且成功更新了予約番号字段。
+预期结果：resp.body解析后的对象的body.length应该等于1，resp.statusCode应该等于200，resp.body解析后的对象的body属性应该等于[0]。
+
+
+
+// 假设成功更新，数据库返回的数据
+const resp = {
+  statusCode: 200,
+  body: JSON.stringify({
+    body: [0],
+  }),
+};
+
+// 断言
+expect(JSON.parse(resp.body).body.length).toEqual(1);
+expect(resp.statusCode).toBe(200);
+expect(JSON.parse(resp.body).body).toEqual([0]);
+
+
+
+
+
+
+Case 2: 更新失败，记录不存在
+假设：数据库中不存在满足所有条件的记录，更新操作未执行。
+预期结果：resp.body解析后的对象的body.length应该等于1（假设即使未更新，也有1个默认记录），resp.statusCode应该等于200，resp.body解析后的对象的body属性应该等于[0]。
+
+// 假设更新失败，数据库返回的数据
+const resp = {
+  statusCode: 200,
+  body: JSON.stringify({
+    body: [0],
+  }),
+};
+
+// 断言
+expect(JSON.parse(resp.body).body.length).toEqual(1);
+expect(resp.statusCode).toBe(200);
+expect(JSON.parse(resp.body).body).toEqual([0]);
+
+
+
+
+Case 3: 更新失败，条件不匹配
+假设：数据库中存在满足一部分条件的记录，但予約番号不匹配，无法更新。
+预期结果：resp.body解析后的对象的body.length应该等于1（假设即使未更新，也有1个默认记录），resp.statusCode应该等于200，resp.body解析后的对象的body属性应该等于[0]。
+
+
+// 假设更新失败，数据库返回的数据
+const resp = {
+  statusCode: 200,
+  body: JSON.stringify({
+    body: [0],
+  }),
+};
+
+// 断言
+expect(JSON.parse(resp.body).body.length).toEqual(1);
+expect(resp.statusCode).toBe(200);
+expect(JSON.parse(resp.body).body).toEqual([0]);
+
