@@ -1,0 +1,55 @@
+import { z } from "zod";
+
+type Body = {
+  预约番号: string;
+  履历番号: string;
+  更新日期: string;
+  定期卷情报确认者: string;
+  区间径路情报确认者: string;
+  购入者情报确认者: string;
+};
+
+const schema = z.object({
+  预约番号: z.string(),
+  履历番号: z.string(),
+  更新日期: z.string(),
+  定期卷情报确认者: z.string().optional(),
+  区间径路情报确认者: z.string().optional(),
+  购入者情报确认者: z.string().optional(),
+}).refine(({ 定期卷情报确认者, 区间径路情报确认者, 购入者情报确认者 }) =>
+  定期卷情报确认者 || 定期卷情报确认者 === '' || 区间径路情报确认者 || 区间径路情报确认者 === '' || 购入者情报确认者 || 购入者情报确认者 === ''
+);
+
+export const handler = defaultHandler<Body>(schema, async (body) => {
+  const params = [body.预约番号, body.履历番号, body.更新日期];
+  
+  let 预约update = `update 预约表 set
+    ${body.定期卷情报确认者 || body.定期卷情报确认者 === '' ? 
+      (body.定期卷情报确认者 !== '' ? 
+        ` 定期卷情报确认日时 = current_timeStamp, 定期卷情报确认者 = fnc_enc_rtn($${params.push(body.定期卷情报确认者)})` :
+        ` 定期卷情报确认日时 = null, 定期卷情报确认者 = null,`) :
+      ''}
+    ${body.区间径路情报确认者 || body.区间径路情报确认者 === '' ? 
+      (body.区间径路情报确认者 !== '' ? 
+        ` 区间径路情报确认日时 = current_timeStamp, 区间径路情报确认者 = fnc_enc_rtn($${params.push(body.区间径路情报确认者)})` :
+        ` 区间径路情报确认日时 = null, 区间径路情报确认者 = null,`) :
+      ''}
+    ${body.购入者情报确认者 || body.购入者情报确认者 === '' ? 
+      (body.购入者情报确认者 !== '' ? 
+        ` 购入者情报确认日时 = current_timeStamp, 购入者情报确认者 = fnc_enc_rtn($${params.push(body.购入者情报确认者)})` :
+        ` 购入者情报确认日时 = null, 购入者情报确认者 = null,`) :
+      ''}
+
+  更新日时 = current_timeStamp
+  where 预约番号 = $1
+    and 履历番号 = $2
+    and to_char(更新日时, 'yyyy/mm/dd hh24:MI:SS.US') = $3
+  Returning to_char(更新日期, 'yyyy/mm/dd hh24:mi:ss.us') as 更新日时`;
+
+  const res = await usedbnotcommirollback(async (client) => {
+    const resp_reserve = await client.query(update预约, params);
+    return resp_reserve;
+  });
+
+  return setResponse(200, { 更新日时: res.rows[0]?.更新日时, 更新件数: res.rowCount });
+};
