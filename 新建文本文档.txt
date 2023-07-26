@@ -1,120 +1,31 @@
-import React, { useEffect, useRef, useState } from 'react';
-import './c2.css'; // 引入CSS文件
+test("测试", async () => {
+  const ev = eventJson;
+  ev.body = JSON.stringify({
+    预约番号: "123456",
+    履历番号: "3",
+    更新日期: "2023/11",
+    定期卷情报确认: "", // 为空
+  });
 
-const imgURL = 'https://picx.zhimg.com/v2-3b4fc7e3a1195a081d0259246c38debc_720w.jpg?source=172ae18b';
+  // 连接数据库
+  const client = await pool.connect();
 
-const ImageComponent = () => {
-  const [scale, setScale] = useState(1); // 图片的初始缩放比例
-  const [rotate, setRotate] = useState(0); // 图片的初始旋转角度
-  const [selected, setSelected] = useState(false); // 是否选中画布
+  try {
+    // 执行数据库操作
+    await client.query('更新回原来的日期操作');
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const borderRef = useRef<HTMLDivElement>(null);
+    // 调用handler函数，并获取响应
+    const resp = await handler(ev.context);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    const img = new Image();
-
-    img.onload = () => {
-      if (canvas && ctx) {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        updateBorderSize();
-      }
-    };
-
-    img.src = imgURL;
-  }, []);
-
-  useEffect(() => {
-    updateBorderSize();
-  }, [rotate]);
-
-  const updateBorderSize = () => {
-    const container = containerRef.current;
-    const border = borderRef.current;
-    if (container && border) {
-      const containerRect = container.getBoundingClientRect();
-      const imgRect = container.querySelector('canvas')?.getBoundingClientRect();
-      if (imgRect) {
-        const left = imgRect.left - containerRect.left;
-        const top = imgRect.top - containerRect.top;
-        const width = imgRect.width;
-        const height = imgRect.height;
-
-        border.style.left = `${left}px`;
-        border.style.top = `${top}px`;
-        border.style.width = `${width}px`;
-        border.style.height = `${height}px`;
-      }
-    }
-  };
-
-  const handleRotateLeft = () => {
-    setRotate(rotate - 90);
-    setScale(rotate % 180 === 0 ? 0.6 : 1);
-  };
-
-  const handleRotateRight = () => {
-    setRotate(rotate + 90);
-    setScale(rotate % 180 === 0 ? 0.6 : 1);
-  };
-
-  const handleCanvasClick = () => {
-    setSelected(true);
-  };
-
-  return (
-    <div className="dialog-content">
-      <div className="image-container">
-        <div
-          className={`canvas-wrapper ${selected ? 'selected' : ''}`}
-          onClick={handleCanvasClick}
-          ref={containerRef}
-        >
-          <canvas
-            ref={canvasRef}
-            className="image"
-            style={{
-              transformOrigin: 'center center',
-              transform: `scale(${scale}) rotate(${rotate}deg)`,
-            }}
-          />
-          <div className={`border-overlay ${selected ? '' : 'hidden'}`} ref={borderRef} />
-        </div>
-        <div className="button-container">
-          <button onClick={handleRotateLeft}>Rotate Left</button>
-          <button onClick={handleRotateRight}>Rotate Right</button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default ImageComponent;
-
-
-
-
-
-
-.canvas-wrapper {
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-}
-
-
-.canvas-wrapper.selected .border-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  border: 2px solid red;
-}
-
+    // 添加您的其他断言和期望
+    expect(resp.statusCode).toBe(200);
+    // 假设handler函数返回一个JSON字符串，您可以使用JSON.parse()来解析响应
+    const responseBody = JSON.parse(resp.body);
+    // 然后验证预期的结果
+    expect(responseBody.更新日时).toBeUndefined();
+    expect(responseBody.更新件数).toBe(1);
+  } finally {
+    // 在操作完成后释放连接回连接池
+    client.release();
+  }
+});
