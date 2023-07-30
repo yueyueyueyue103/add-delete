@@ -1,6 +1,0 @@
-SELECT a.站名, b.站名, c.站名
-FROM 预约表
-INNER JOIN 站表 AS a ON 预约表.发站 = a.站号
-INNER JOIN 站表 AS b ON 预约表.着站 = b.站号
-INNER JOIN 站表 AS c ON 预约表.换乘站 = c.站号
-WHERE 预约表.预约番号 = '1'
